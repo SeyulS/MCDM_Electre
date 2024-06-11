@@ -2,6 +2,17 @@ body {
     font-family: Arial, sans-serif;
 }
 
+h1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    /* height: 100vh; */
+    /* Stretches to cover the entire viewport height */
+    margin: 0;
+    /* Removes default margins */
+}
+
 .background-css {
     background-color: #ffffff;
     opacity: 1;

@@ -410,8 +410,6 @@ $weight = [4, 3, 1, 2, 5];
             }
 
             echo "</table>";
-
-
             echo "<br>";
 
 
@@ -440,6 +438,23 @@ $weight = [4, 3, 1, 2, 5];
 
             echo "<br>";
 
+            echo "Disordance:\n";
+            echo "<table>";
+            echo "<tr>";
+            echo "<th>Index</th>";
+            echo "<th>Missing Indices</th>";
+            echo "</tr>";
+
+            foreach ($disordance as $key => $indices) {
+                echo "<tr>";
+                echo "<td>" . $key . "</td>";
+                echo "<td>" . implode(" ", $indices) . "</td>";
+                echo "</tr>";
+            }
+
+            echo "</table>";
+
+            echo "<br>";
 
             // Weighted Concordance
             $weighted_concordance = [];
