@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body > <!--class="background-css"-->
+    <div class="container">
+        <div class="vertical-center">
+            <h1 style="justify-content: center;">Choose Your Method</h1>
+            <button class="continue-application col-6" onclick="electre()">
+                <div>
+                    <div class="pencil"></div>
+                    <div class="folder">
+                        <div class="top">
+                            <svg viewBox="0 0 24 27">
+                                <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
+                            </svg>
+                        </div>
+                        <div class="paper"></div>
+                    </div>
+                </div>
+                Continue Application
+            </button>
+            <button class="continue-application col-6" onclick="dematel()">
+                <div>
+                    <div class="pencil"></div>
+                    <div class="folder">
+                        <div class="top">
+                            <svg viewBox="0 0 24 27">
+                                <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
+                            </svg>
+                        </div>
+                        <div class="paper"></div>
+                    </div>
+                </div>
+                Continue Application
+            </button>
+        </div>
+    </div>
+
+    <div class="form-container" id="form">
+        <form onsubmit="event.preventDefault(); formSubmit();">
+            <h2>Form Application</h2>
+            <label for="name">Nama lengkap</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="age">Usia</label>
+            <select id="age" name="age">
+                <option value="17-21 tahun">17-21 tahun</option>
+                <option value="> 21 tahun">> 21 tahun</option>
+            </select>
+
+            <label for="experience">Pengalaman</label>
+            <select id="experience" name="experience">
+                <option value="Pernah bekerja di bidang tersebut">Pernah bekerja di bidang tersebut</option>
+                <option value="Memiliki pengalaman kepanitiaan">Memiliki pengalaman kepanitiaan</option>
+            </select>
+
+            <label for="softskill">Soft Skill</label>
+            <select id="softskill" name="softskill">
+                <option value="Komunikasi">Komunikasi</option>
+                <option value="Problem Solving">Problem Solving</option>
+                <option value="Inisiatif">Inisiatif</option>
+                <option value="Leadership">Leadership</option>
+            </select>
+
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender">
+                <option value="Laki-laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+            </select>
+
+            <label for="cvformat">Format CV</label>
+            <select id="cvformat" name="cvformat">
+                <option value="Sopan">Sopan</option>
+                <option value="Format email">Format email</option>
+                <option value="Waktu pengiriman">Waktu pengiriman</option>
+            </select>
+
+            <button class="formSubmit"> Submit
+        </form>
+    </div>
+
+    <script>
+        function electre() {
+            window.location.href = "hitungan.php";
+        }
+        function dematel() {
+            window.location.href = "dematel.html";
+        }
+
+        function formSubmit(){
+            window.location.href = "homepage.html";
+        }
+    </script>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
