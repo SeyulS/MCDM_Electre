@@ -122,6 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['weight_age'])) {
 
 <body>
     <div class="container mt-5">
+        <a href="index.html" class="btn btn-warning mt-3">back</a>
         <div class="row">
             <div class="col-12" style="text-align: center;">
                 <h2>List of Candidates</h2> <!-- Judul "List of Candidates" -->
@@ -860,11 +861,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['weight_age'])) {
                 $chosenCandidateName = $submittedCandidateNames[$max_row_index];
                 echo "<br>";
                 echo "<h1>Chosen Candidate: $chosenCandidateName</h1>";
-                
+
                 // Find and display details of the chosen candidate
                 foreach ($cvs as $index => $cv) {
                     if ($cv['name'] === $chosenCandidateName) {
-                        ?>
+        ?>
                         <div class="col-md-6 mb-3">
                             <div class="card">
                                 <div class="row g-0">
@@ -892,19 +893,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['weight_age'])) {
                 echo "<br>";
                 echo "<h1>Chosen Candidates</h1>";
                 echo "<div class='row'>"; // Start Bootstrap row
-            
+
                 foreach ($max_row_indices as $index) {
                     $chosenCandidateName = $submittedCandidateNames[$index];
-            
+
                     // Display the name of each chosen candidate
                     echo "<div class='col-md-6 mb-3'>"; // Start Bootstrap column with margin-bottom
                     echo "<div class='card'>";
                     echo "<div class='row g-0'>";
-            
+
                     // Find and display details of each chosen candidate
                     foreach ($cvs as $cv_index => $cv) {
                         if ($cv['name'] === $chosenCandidateName) {
-                            ?>
+                        ?>
                             <div class="col-md-4">
                                 <img class="img-fluid rounded-start" src="data:image/jpeg;base64,<?= $cv['image']; ?>" />
                             </div>
@@ -918,20 +919,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['weight_age'])) {
                                     <p class="card-text"><strong>Format:</strong> <?= $cv['format'] ?></p>
                                 </div>
                             </div>
-                            <?php
+        <?php
                         }
                     }
-            
+
                     echo "</div>"; // End Bootstrap row inside card
                     echo "</div>"; // End Bootstrap card
                     echo "</div>"; // End Bootstrap column
                 }
-            
+
                 echo "</div>"; // End Bootstrap row
                 echo    "<br>";
             }
-            
-            
         }
         ?>
 

@@ -472,6 +472,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
     <div class="container">
+        <!-- <button class="btn btn-primary"><a class="text-decoration-none" href="index.html">back</a></button> -->
+        <a href="index.html" class="btn btn-warning mt-3">back</a>
         <div class="row mt-3 mb-3">
             <form id="matrix-form" action="" method="post" onsubmit="hideTable(event)">
                 <h3>Input Matrix Pairwise</h3>
