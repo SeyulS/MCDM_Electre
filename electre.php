@@ -855,17 +855,83 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['weight_age'])) {
 
             // Jika hanya ada satu baris dengan jumlah 1 terbanyak, maka pilih itu
             if (count($max_row_indices) == 1) {
+                // Display single chosen candidate
                 $max_row_index = $max_row_indices[0];
+                $chosenCandidateName = $submittedCandidateNames[$max_row_index];
                 echo "<br>";
-                echo "<h1>Chosen Candidate:$submittedCandidateNames[$max_row_index]</h1>";
-            } else {
-                // Jika ada lebih dari satu baris dengan jumlah 1 terbanyak, tampilkan semua kandidat
-                echo "<br>";
-                echo "<h1>Chosen Candidates:</h1>";
-                foreach ($max_row_indices as $index) {
-                    echo "<p><h2>$submittedCandidateNames[$index]<h2></p>";
+                echo "<h1>Chosen Candidate: $chosenCandidateName</h1>";
+                
+                // Find and display details of the chosen candidate
+                foreach ($cvs as $index => $cv) {
+                    if ($cv['name'] === $chosenCandidateName) {
+                        ?>
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="row g-0">
+                                    <div class="col-md-4">
+                                        <img class="img-fluid rounded-start" src="data:image/jpeg;base64,<?= $cv['image']; ?>" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><?= $cv['name'] ?></h5>
+                                            <p class="card-text"><strong>Age:</strong> <?= $cv['age'] ?></p>
+                                            <p class="card-text"><strong>Experience:</strong> <?= $cv['experience'] ?></p>
+                                            <p class="card-text"><strong>Gender:</strong> <?= $cv['gender'] ?></p>
+                                            <p class="card-text"><strong>Soft Skill:</strong> <?= $cv['softskill'] ?></p>
+                                            <p class="card-text"><strong>Format:</strong> <?= $cv['format'] ?></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    }
                 }
+            } else {
+                // Display multiple chosen candidates
+                echo "<br>";
+                echo "<h1>Chosen Candidates</h1>";
+                echo "<div class='row'>"; // Start Bootstrap row
+            
+                foreach ($max_row_indices as $index) {
+                    $chosenCandidateName = $submittedCandidateNames[$index];
+            
+                    // Display the name of each chosen candidate
+                    echo "<div class='col-md-6 mb-3'>"; // Start Bootstrap column with margin-bottom
+                    echo "<div class='card'>";
+                    echo "<div class='row g-0'>";
+            
+                    // Find and display details of each chosen candidate
+                    foreach ($cvs as $cv_index => $cv) {
+                        if ($cv['name'] === $chosenCandidateName) {
+                            ?>
+                            <div class="col-md-4">
+                                <img class="img-fluid rounded-start" src="data:image/jpeg;base64,<?= $cv['image']; ?>" />
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title"><?= $cv['name'] ?></h5>
+                                    <p class="card-text"><strong>Age:</strong> <?= $cv['age'] ?></p>
+                                    <p class="card-text"><strong>Experience:</strong> <?= $cv['experience'] ?></p>
+                                    <p class="card-text"><strong>Gender:</strong> <?= $cv['gender'] ?></p>
+                                    <p class="card-text"><strong>Soft Skill:</strong> <?= $cv['softskill'] ?></p>
+                                    <p class="card-text"><strong>Format:</strong> <?= $cv['format'] ?></p>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    }
+            
+                    echo "</div>"; // End Bootstrap row inside card
+                    echo "</div>"; // End Bootstrap card
+                    echo "</div>"; // End Bootstrap column
+                }
+            
+                echo "</div>"; // End Bootstrap row
+                echo    "<br>";
             }
+            
+            
         }
         ?>
 
