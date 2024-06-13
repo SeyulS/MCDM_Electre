@@ -472,6 +472,23 @@ $weight = [4, 3, 1, 2, 5];
                 echo $key . ": " . $value . "<br>";
             }
 
+
+            echo "Weighted Concordance:\n";
+            echo "<table>";
+            echo "<tr>";
+            echo "<th>Key</th>";
+            echo "<th>Value</th>";
+            echo "</tr>";
+
+            foreach ($weighted_concordance as $key => $value) {
+                echo "<tr>";
+                echo "<td>$key</td>";
+                echo "<td>$value</td>";
+                echo "</tr>";
+            }
+
+            echo "</table>";
+
             $num_rows = 0;
             $num_columns = 0;
             foreach ($weighted_concordance as $key => $value) {
@@ -493,7 +510,7 @@ $weight = [4, 3, 1, 2, 5];
 
             // Menampilkan matriks
             echo "<br>";
-            echo "Matrix Concordance:<br>";
+            echo "Matrix Concordance Real :<br>";
             $count = 0;
             for ($i = 0; $i < $num_rows; $i++) {
                 for ($j = 0; $j < $num_columns; $j++) {
@@ -505,6 +522,29 @@ $weight = [4, 3, 1, 2, 5];
                     echo "<br>";
                 }
             }
+
+
+            // Assuming your matrix is pre-defined as $matrix
+
+            echo "<table>";
+            echo "Matrix Concordance : ";  // Table caption
+
+            echo "<tr>";  // Table header row
+            // Add header cells if needed (modify as needed)
+            for ($j = 0; $j < $num_columns; $j++) {
+                echo "<th>Column " . ($j + 1) . "</th>";
+            }
+            echo "</tr>";
+
+            for ($i = 0; $i < $num_rows; $i++) {
+                echo "<tr>";
+                for ($j = 0; $j < $num_columns; $j++) {
+                    echo "<td>" . $matrix[$i][$j] . "</td>";
+                }
+                echo "</tr>";
+            }
+
+            echo "</table>";
 
             // Weighted Disordance
 
@@ -521,7 +561,7 @@ $weight = [4, 3, 1, 2, 5];
                     // Menghitung perbedaan absolut antara elemen-elemen yang relevan dan mencari nilai maksimumnya
                     foreach ($indices as $index) {
                         // Mengambil indeks kolom dari disordance
-                        echo $index;
+                        // echo $index;
                         $k = $index;
 
                         // Menghitung perbedaan absolut antara elemen dari baris pertama dan kedua
@@ -543,10 +583,27 @@ $weight = [4, 3, 1, 2, 5];
 
             // Menampilkan hasil weighted disordance
             echo "<br>";
-            echo "Weighted Disordance:<br>";
+            echo "Weighted Disordance Real :<br>";
             foreach ($weighted_disordance as $key => $value) {
                 echo $key . ": " . $value . "<br>";
             }
+
+            echo "<br>";
+            echo "<table>";
+            echo "Weighted Disordance";  // Table caption
+
+            echo "<tr>";  // Table header row
+            echo "<th>Key</th>";
+            echo "<th>Value</th>";
+            echo "</tr>";
+
+            foreach ($weighted_disordance as $key => $value) {
+                echo "<tr>";
+                echo "<td>" . $key . "</td>";
+                echo "<td>" . $value . "</td>";
+                echo "</tr>";
+            }
+            echo "</table>";
 
             $num_rows = 0;
             $num_columns = 0;
@@ -569,7 +626,7 @@ $weight = [4, 3, 1, 2, 5];
 
             // Menampilkan matriks
             echo "<br>";
-            echo "Matrix Disordance:<br>";
+            echo "Matrix Disordance Real :<br>";
             $count = 0;
             for ($i = 0; $i < $num_rows; $i++) {
                 for ($j = 0; $j < $num_columns; $j++) {
@@ -581,6 +638,28 @@ $weight = [4, 3, 1, 2, 5];
                     echo "<br>";
                 }
             }
+
+            // Assuming your matrix is pre-defined as $matrix
+            echo "<br>";
+            echo "<table>";
+            echo "Matrix Disordance : </br>";  // Table caption
+
+            echo "<tr>";  // Table header row
+            // Add header cells if needed (modify as needed)
+            for ($j = 0; $j < $num_columns; $j++) {
+                echo "<th>Column " . ($j + 1) . "</th>";
+            }
+            echo "</tr>";
+
+            for ($i = 0; $i < $num_rows; $i++) {
+                echo "<tr>";
+                for ($j = 0; $j < $num_columns; $j++) {
+                    echo "<td>" . $matrix[$i][$j] . "</td>";
+                }
+                echo "</tr>";
+            }
+
+            echo "</table>";
 
             // Menghitung total dari setiap baris matriks concordance
             $total = 0;
@@ -597,13 +676,14 @@ $weight = [4, 3, 1, 2, 5];
             $thresholdCon = $total / (sizeof($data) * (sizeof($data) - 1));
             $thresholdDis = $total2 / (sizeof($data) * (sizeof($data) - 1));
 
-            echo "Total1: " . $total;
             echo "<br>";
-            echo "Total2: " . $total2;
+            echo "<b>Total Matriks Concordance : </b></br>" . $total;
             echo "<br>";
-            echo "Threshold " . $thresholdCon;
+            echo "<b>Total Matriks Disordance : </b></br>" . $total2;
             echo "<br>";
-            echo "Threshold " . $thresholdDis;
+            echo "<b>Threshold Concordance : </b></br>" . $thresholdCon;
+            echo "<br>";
+            echo "<b>Threshold Disordance : </b></br>" . $thresholdDis;
             echo "<br>";
 
             // Misalkan $thresholdCon adalah nilai ambang batas yang telah ditentukan
@@ -616,7 +696,6 @@ $weight = [4, 3, 1, 2, 5];
                 }
             }
 
-
             foreach ($weighted_disordance as &$value) {
                 if ($value >= $thresholdDis) {
                     $value = 1;
@@ -627,19 +706,57 @@ $weight = [4, 3, 1, 2, 5];
             // Jika Anda ingin menampilkan nilai array yang sudah diubah
             echo "<br>";
 
-            echo "Weighted Concordance:\n";
+            echo "Weighted Concordance Real :\n";
             echo "<br>";
 
             foreach ($weighted_concordance as $key => $value) {
                 echo $key . ": " . $value . "<br>";
             }
 
-            echo "Weighted Concordance:\n";
+            echo "<br>";
+            echo "Weighted Concordance :\n<br>";
+
+            echo "<table>";
+            echo "<tr>
+                    <th>Term</th>
+                    <th>Weight</th>
+                </tr>";
+
+            foreach ($weighted_concordance as $key => $value) {
+                echo "<tr>
+                        <td>$key</td>
+                        <td>$value</td>
+                    </tr>";
+            }
+
+            echo "</table>";
+
+
+            echo "<br>";
+            echo "Weighted Disordance :\n";
             echo "<br>";
 
             foreach ($weighted_disordance as $key => $value) {
                 echo $key . ": " . $value . "<br>";
             }
+
+            echo "<br>";
+            echo "Weighted Disordance :\n<br>";
+
+            echo "<table>";
+            echo "<tr>
+                    <th>Term</th>
+                    <th>Weight</th>
+                </tr>";
+
+            foreach ($weighted_disordance as $key => $value) {
+                echo "<tr>
+                        <td>$key</td>
+                        <td>$value</td>
+                    </tr>";
+            }
+
+            echo "</table>";
 
             $aggregate_matrix = [];
 
@@ -664,6 +781,24 @@ $weight = [4, 3, 1, 2, 5];
                 echo $key . ": " . $value . "<br>";
             }
 
+            echo "<br>";
+            echo "Hasil Perkalian dalam Aggregate Matrix: :\n<br>";
+
+            echo "<table>";
+            echo "<tr>
+                    <th>Term</th>
+                    <th>Weight</th>
+                </tr>";
+
+            foreach ($aggregate_matrix as $key => $value) {
+                echo "<tr>
+                        <td>$key</td>
+                        <td>$value</td>
+                    </tr>";
+            }
+
+            echo "</table>";
+
             $num_rows = 0;
             $num_columns = 0;
             foreach ($aggregate_matrix as $key => $value) {
@@ -685,7 +820,7 @@ $weight = [4, 3, 1, 2, 5];
 
             // Menampilkan matriks
             echo "<br>";
-            echo "Matrix Disordance:<br>";
+            echo "Matrix Disordance Real :<br>";
             $count = 0;
             for ($i = 0; $i < $num_rows; $i++) {
                 for ($j = 0; $j < $num_columns; $j++) {
@@ -697,6 +832,22 @@ $weight = [4, 3, 1, 2, 5];
                     echo "<br>";
                 }
             }
+
+
+            echo "<br>";
+            echo "Matrix Disordance:<br>";
+            echo "<table>";
+
+            for ($i = 0; $i < $num_rows; $i++) {
+                echo "<tr>";
+                for ($j = 0; $j < $num_columns; $j++) {
+                    echo "<td>" . $matrix[$i][$j] . "</td>";
+                }
+                echo "</tr>";
+            }
+
+            echo "</table>";
+
             $max_row_index = -1;
             $max_count = 0;
 
