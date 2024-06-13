@@ -374,50 +374,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['weight_age'])) {
 
             $concordance = [];
 
-            // Loop to compare each pair of rows
             $num_rows = count($weighted_array);
             for ($i = 0; $i < $num_rows - 1; $i++) {
                 for ($j = $i + 1; $j < $num_rows; $j++) {
                     // Get the number of columns
                     $num_columns = count($weighted_array[$i]);
 
-                    // Initialize array to store matching indices
+                    // Initialize arrays to store matching indices
                     $matching_indices = [];
+                    $opposite_matching_indices = [];
 
                     // Compare each element in the pair of rows
                     for ($k = 0; $k < $num_columns; $k++) {
                         if ($weighted_array[$i][$k] >= $weighted_array[$j][$k]) {
-                            // If element in row 1 is greater or equal to the corresponding element in row 2
+                            // If element in row $i is greater or equal to the corresponding element in row $j
                             // Record the index of that element
                             $matching_indices[] = $k;
                         }
+
+                        if ($weighted_array[$j][$k] >= $weighted_array[$i][$k]) {
+                            // If element in row $j is greater or equal to the corresponding element in row $i
+                            // Record the index of that element for the opposite comparison
+                            $opposite_matching_indices[] = $k;
+                        }
                     }
 
-                    // If there are matching indices
+                    // If there are matching indices, add the comparison result to the concordance array
                     if (!empty($matching_indices)) {
-                        // Add the comparison result to the concordance array
                         $concordance[] = ["c" . ($i + 1) . ($j + 1), $matching_indices];
+                    }
 
-                        // Check the opposite comparison
-                        $opposite_comparison = "c" . ($j + 1) . ($i + 1);
-                        $opposite_matching_indices = [];
-
-                        for ($k = 0; $k < $num_columns; $k++) {
-                            if ($weighted_array[$j][$k] >= $weighted_array[$i][$k]) {
-                                // If element in row 2 is greater or equal to the corresponding element in row 1
-                                // Record the index of that element
-                                $opposite_matching_indices[] = $k;
-                            }
-                        }
-
-                        // If there are matching indices for the opposite comparison
-                        if (!empty($opposite_matching_indices)) {
-                            // Add the opposite comparison result to the concordance array
-                            $concordance[] = [$opposite_comparison, $opposite_matching_indices];
-                        }
+                    // If there are matching indices for the opposite comparison and it's not a duplicate
+                    if (!empty($opposite_matching_indices) && !in_array("c" . ($j + 1) . ($i + 1), array_column($concordance, 0))) {
+                        $concordance[] = ["c" . ($j + 1) . ($i + 1), $opposite_matching_indices];
                     }
                 }
             }
+
 
             // Modify concordance indices to start from 1
             foreach ($concordance as &$comparison) {
@@ -484,9 +477,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['weight_age'])) {
             $weighted_concordance = [];
             foreach ($concordance as $comparison) {
                 $weighted_indices = $comparison[1];
-                $weighted_sum = array_sum(array_intersect_key($weight, array_flip($weighted_indices)));
+
+                $adjusted_indices = array_map(function ($index) {
+                    return $index - 1; // Mengurangi 1 dari setiap indeks
+                }, $weighted_indices);
+
+                $weighted_sum = array_sum(array_intersect_key($weight, array_flip($adjusted_indices)));
+
                 $weighted_concordance[$comparison[0]] = $weighted_sum;
             }
+
 
 
             echo "<h3>Weighted Concordance</h3>\n";
@@ -837,24 +837,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['weight_age'])) {
 
             echo "</table>";
 
-            $max_row_index = -1;
             $max_count = 0;
+            $max_row_indices = [];
 
             // Menghitung jumlah kemunculan 1 di setiap baris matriks
             foreach ($matrix as $row_index => $row) {
                 $count = array_sum($row);
 
-                // Memperbarui baris dengan jumlah kemunculan 1 terbanyak jika ditemukan
+                // Memperbarui baris dengan jumlah kemunculan 1 terbanyak
                 if ($count > $max_count) {
                     $max_count = $count;
-                    $max_row_index = $row_index;
+                    $max_row_indices = [$row_index]; // Reset dan tambahkan indeks baru
+                } elseif ($count == $max_count) {
+                    $max_row_indices[] = $row_index; // Tambahkan indeks jika jumlahnya sama
                 }
             }
 
-            // Menampilkan hasil
-            // echo "Baris dengan Kemunculan 1 Terbanyak dalam Matriks: " . ($max_row_index + 1);
-            echo "<br>";
-            echo "<h1>Chosen Candidate: $submittedCandidateNames[$max_row_index] </h1>";
+            // Jika hanya ada satu baris dengan jumlah 1 terbanyak, maka pilih itu
+            if (count($max_row_indices) == 1) {
+                $max_row_index = $max_row_indices[0];
+                echo "<br>";
+                echo "<h1>Chosen Candidate:$submittedCandidateNames[$max_row_index]</h1>";
+            } else {
+                // Jika ada lebih dari satu baris dengan jumlah 1 terbanyak, tampilkan semua kandidat
+                echo "<br>";
+                echo "<h1>Chosen Candidates:</h1>";
+                foreach ($max_row_indices as $index) {
+                    echo "<p><h2>$submittedCandidateNames[$index]<h2></p>";
+                }
+            }
         }
         ?>
 
