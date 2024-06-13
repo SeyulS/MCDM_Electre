@@ -521,10 +521,11 @@ $weight = [4, 3, 1, 2, 5];
                     // Menghitung perbedaan absolut antara elemen-elemen yang relevan dan mencari nilai maksimumnya
                     foreach ($indices as $index) {
                         // Mengambil indeks kolom dari disordance
+                        echo $index;
                         $k = $index;
 
                         // Menghitung perbedaan absolut antara elemen dari baris pertama dan kedua
-                        $diff = abs($weighted_array[$i][$k] - $weighted_array[$j][$k]);
+                        $diff = abs($weighted_array[$i][$k - 1] - $weighted_array[$j][$k - 1]);
 
                         // Memperbarui nilai maksimum jika diperlukan
                         if ($diff > $max_diff) {
@@ -601,7 +602,9 @@ $weight = [4, 3, 1, 2, 5];
             echo "Total2: " . $total2;
             echo "<br>";
             echo "Threshold " . $thresholdCon;
+            echo "<br>";
             echo "Threshold " . $thresholdDis;
+            echo "<br>";
 
             // Misalkan $thresholdCon adalah nilai ambang batas yang telah ditentukan
 
@@ -622,6 +625,8 @@ $weight = [4, 3, 1, 2, 5];
                 }
             }
             // Jika Anda ingin menampilkan nilai array yang sudah diubah
+            echo "<br>";
+
             echo "Weighted Concordance:\n";
             echo "<br>";
 
