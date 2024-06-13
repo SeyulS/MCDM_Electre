@@ -1,4 +1,5 @@
 <?php
+session_start();
 function get_image_data($file)
 {
     // Membaca file gambar
@@ -47,7 +48,18 @@ $cvs = [
     ]
 ];
 
-$weight = [4, 3, 1, 2, 5];
+$weight = isset($_SESSION['weight']) ? $_SESSION['weight'] : [];
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['weight_age'])) {
+    $weight = [
+        $_POST['weight_age'],
+        $_POST['weight_experience'],
+        $_POST['weight_gender'],
+        $_POST['weight_softskill'],
+        $_POST['weight_format']
+    ];
+    $_SESSION['weight'] = $weight;
+}
 
 ?>
 
@@ -61,6 +73,9 @@ $weight = [4, 3, 1, 2, 5];
     <title>CV List</title>
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         function acceptCandidate(name, cardId) {
             // Menambahkan kandidat ke dalam tabel
@@ -82,8 +97,10 @@ $weight = [4, 3, 1, 2, 5];
             event.preventDefault();
             var table = document.getElementById("acceptedCandidates").getElementsByTagName('tbody')[0];
             var data = [];
+            var names = [];
             for (var i = 0, row; row = table.rows[i]; i++) {
                 var rowData = [];
+                names.push(row.cells[0].innerText); // Collect candidate names
                 for (var j = 1, col; col = row.cells[j]; j++) { // Skip name column
                     var input = col.querySelector('input');
                     if (input) {
@@ -95,16 +112,20 @@ $weight = [4, 3, 1, 2, 5];
 
             // Isi nilai input tersembunyi dengan data yang dikumpulkan
             document.getElementById('submittedData').value = JSON.stringify(data);
+            document.getElementById('submittedNames').value = JSON.stringify(names); // Send names as well
 
             // Submit form secara otomatis
             document.getElementById('myForm').submit();
-        };
+        }
     </script>
 </head>
 
 <body>
     <div class="container mt-5">
         <div class="row">
+            <div class="col-12" style="text-align: center;">
+                <h2>List of Candidates</h2> <!-- Judul "List of Candidates" -->
+            </div>
             <!-- Dynamic Cards for CVs -->
             <?php foreach ($cvs as $index => $cv) : ?>
                 <div class="col-md-6" id="card-<?= $index ?>">
@@ -121,7 +142,7 @@ $weight = [4, 3, 1, 2, 5];
                                     <p class="card-text"><strong>Gender:</strong> <?= $cv['gender'] ?></p>
                                     <p class="card-text"><strong>Soft Skill:</strong> <?= $cv['softskill'] ?></p>
                                     <p class="card-text"><strong>Format:</strong> <?= $cv['format'] ?></p>
-                                    <button class="btn btn-primary" onclick="acceptCandidate('<?= $cv['name'] ?>', 'card-<?= $index ?>')">Accept</button>
+                                    <button class="btn btn-success" onclick="acceptCandidate('<?= $cv['name'] ?>', 'card-<?= $index ?>')">Accept</button>
                                 </div>
                             </div>
                         </div>
@@ -129,47 +150,67 @@ $weight = [4, 3, 1, 2, 5];
                 </div>
             <?php endforeach; ?>
         </div>
-        <!-- <h3>Weight the Criteria</h3>
-        <form action="test.php" method="POST">
-            <table class="table table-bordered" id="weightCriteria">
-                <tbody>
-                    <tr>
-                        <td>Age</td>
-                        <td><input type="number" name="weight_age" class="form-control" min="0" max="5"></td>
-                    </tr>
-                    <tr>
-                        <td>Experience</td>
-                        <td><input type="number" name="weight_experience" class="form-control" min="0" max="5"></td>
-                    </tr>
-                    <tr>
-                        <td>Gender</td>
-                        <td><input type="number" name="weight_gender" class="form-control" min="0" max="5"></td>
-                    </tr>
-                    <tr>
-                        <td>Soft Skill</td>
-                        <td><input type="number" name="weight_softskill" class="form-control" min="0" max="5"></td>
-                    </tr>
-                    <tr>
-                        <td>Format</td>
-                        <td><input type="number" name="weight_format" class="form-control" min="0" max="5"></td>
-                    </tr>
-                </tbody>
-            </table>
-            <button class="btn btn-success" name="weight">Update</button>
-        </form> -->
+        <hr>
+        <h3 style="text-align: center;">Weight the Criteria</h3>
+        <br>
+        <button class="btn btn-secondary d-block mx-auto" data-toggle="modal" data-target="#weightModal">Click to Weight</button>
+        <br>
+        <hr>
+        <!-- Modal -->
+        <div class="modal fade" id="weightModal" tabindex="-1" role="dialog" aria-labelledby="weightModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="weightModalLabel">Weight the Criteria</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST">
+                            <table class="table table-bordered" id="weightCriteria">
+                                <tbody>
+                                    <tr>
+                                        <td>Age</td>
+                                        <td><input type="number" name="weight_age" class="form-control" min="0" max="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Experience</td>
+                                        <td><input type="number" name="weight_experience" class="form-control" min="0" max="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Gender</td>
+                                        <td><input type="number" name="weight_gender" class="form-control" min="0" max="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Soft Skill</td>
+                                        <td><input type="number" name="weight_softskill" class="form-control" min="0" max="5"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Format</td>
+                                        <td><input type="number" name="weight_format" class="form-control" min="0" max="5"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button class="btn btn-success" name="weight">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         <?php
-        if (isset($_POST['weight'])) {
-            array_push($weight, $_POST['weight_age']);
-            array_push($weight, $_POST['weight_experience']);
-            array_push($weight, $_POST['weight_gender']);
-            array_push($weight, $_POST['weight_softskill']);
-            array_push($weight, $_POST['weight_format']);
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['weight'])) {
+            $_SESSION['weight'] = [
+                $_POST['weight_age'],
+                $_POST['weight_experience'],
+                $_POST['weight_gender'],
+                $_POST['weight_softskill'],
+                $_POST['weight_format']
+            ];
         }
         ?>
-
-
+        <h3 style="text-align: center;">Accepted Candidates</h3>
         <br>
-        <h3>Accepted Candidates</h3>
         <table class="table table-bordered" id="acceptedCandidates">
             <thead>
                 <tr>
@@ -187,15 +228,29 @@ $weight = [4, 3, 1, 2, 5];
         </table>
         <br>
         <!-- Formulir untuk mengirimkan data -->
-        <form id="myForm" method="post">
+        <form id="myForm" method="post" class="text-center">
             <input type="hidden" name="submittedData" id="submittedData">
-            <button type="button" class="btn btn-success" onclick="submitTable()">Submit</button>
+            <input type="hidden" name="submittedNames" id="submittedNames"> <!-- Hidden input for names -->
+            <div class="mt-3">
+                <button type="button" class="btn btn-secondary" onclick="submitTable()">Submit</button>
+            </div>
         </form>
+
+        <hr>
+
 
         <?php
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submittedData'])) {
-            $submittedData = $_POST['submittedData'];
+
+            $weight = $_SESSION['weight'];
             var_dump($weight);
+
+            echo "<h2>Calculation: </h2><br>";
+            $submittedData = $_POST['submittedData'];
+            $submittedCandidateNames = json_decode($_POST['submittedNames']);
+
+            // var_dump($submittedCandidateNames);  
+            // var_dump($weight);
 
             $data = json_decode($submittedData);
 
@@ -223,15 +278,8 @@ $weight = [4, 3, 1, 2, 5];
                 $normalized_array[] = $normalized_row;
             }
 
-            echo "Hasil Normalisasi:\n";
-            echo "<br>";
-            echo "<br>";
 
-            foreach ($normalized_array as $row) {
-                echo implode("\t", $row) . "\n ";
-            }
-
-            echo "Hasil Normalisasi:\n";
+            echo "<h3>Hasil Normalisasi</h3>\n";
             echo "<style>";  // Add inline styling
             echo "table {
                     border-collapse: collapse;
@@ -276,15 +324,7 @@ $weight = [4, 3, 1, 2, 5];
             }
 
 
-            echo "Hasil Perkalian:\n";
-            echo "<br>";
-            echo "<br>";
-
-            foreach ($weighted_array as $row) {
-                echo implode("\t", $row) . "\n ";
-            }
-
-            echo "Hasil Perkalian:\n";
+            echo "<h3>Hasil Perkalian</h3>\n";
             echo "<style>";  // Add inline styling
             echo "table {
                     border-collapse: collapse;
@@ -386,19 +426,11 @@ $weight = [4, 3, 1, 2, 5];
                 }
             }
 
-            // Menampilkan hasil concordance
-            echo "Concordance:\n";
-            echo "<br>";
-            foreach ($concordance as $comparison) {
-                echo $comparison[0] . ": " . implode(" ", $comparison[1]) . "<br>";
-            }
-            echo "<br>";
-
             // Display the concordance table
-            echo "Concordance:\n";
+            echo "<h3>Concordance</h3>\n";
             echo "<table>";
             echo "<tr>";
-            echo "<th>Index</th>";
+            echo "<th>Keys</th>";
             echo "<th>Concordance</th>";
             echo "</tr>";
 
@@ -428,20 +460,12 @@ $weight = [4, 3, 1, 2, 5];
                 $missing_indices = array_diff($all_indices, $comparison[1]);
                 $disordance["d" . substr($comparison[0], 1)] = array_values($missing_indices);
             }
-
-            // Menampilkan hasil disordance
-            echo "Disordance:\n";
-            echo "<br>";
-            foreach ($disordance as $key => $indices) {
-                echo $key . ": " . implode(" ", $indices) . "<br>";
-            }
-
             echo "<br>";
 
-            echo "Disordance:\n";
+            echo "<h3>Disordance</h3>\n";
             echo "<table>";
             echo "<tr>";
-            echo "<th>Index</th>";
+            echo "<th>Keys</th>";
             echo "<th>Missing Indices</th>";
             echo "</tr>";
 
@@ -464,16 +488,8 @@ $weight = [4, 3, 1, 2, 5];
                 $weighted_concordance[$comparison[0]] = $weighted_sum;
             }
 
-            // Menampilkan hasil bobot untuk setiap elemen di concordance
-            echo "Weighted Concordance:\n";
-            echo "<br>";
 
-            foreach ($weighted_concordance as $key => $value) {
-                echo $key . ": " . $value . "<br>";
-            }
-
-
-            echo "Weighted Concordance:\n";
+            echo "<h3>Weighted Concordance</h3>\n";
             echo "<table>";
             echo "<tr>";
             echo "<th>Key</th>";
@@ -510,31 +526,10 @@ $weight = [4, 3, 1, 2, 5];
 
             // Menampilkan matriks
             echo "<br>";
-            echo "Matrix Concordance Real :<br>";
-            $count = 0;
-            for ($i = 0; $i < $num_rows; $i++) {
-                for ($j = 0; $j < $num_columns; $j++) {
-                    echo $matrix[$i][$j] . "\t";
-                }
-                echo "<br>";
-                $count++;
-                if ($count % 4 == 0) {
-                    echo "<br>";
-                }
-            }
-
 
             // Assuming your matrix is pre-defined as $matrix
-
-            echo "<table>";
-            echo "Matrix Concordance : ";  // Table caption
-
-            echo "<tr>";  // Table header row
-            // Add header cells if needed (modify as needed)
-            for ($j = 0; $j < $num_columns; $j++) {
-                echo "<th>Column " . ($j + 1) . "</th>";
-            }
-            echo "</tr>";
+            echo "<caption><h3>Matrix Concordance</h3></caption>";
+            echo "<table border='1'>";  // Tambahkan border agar tabel terlihat
 
             for ($i = 0; $i < $num_rows; $i++) {
                 echo "<tr>";
@@ -583,14 +578,10 @@ $weight = [4, 3, 1, 2, 5];
 
             // Menampilkan hasil weighted disordance
             echo "<br>";
-            echo "Weighted Disordance Real :<br>";
-            foreach ($weighted_disordance as $key => $value) {
-                echo $key . ": " . $value . "<br>";
-            }
 
             echo "<br>";
             echo "<table>";
-            echo "Weighted Disordance";  // Table caption
+            echo "<h3>Weighted Disordance</h3>";  // Table caption
 
             echo "<tr>";  // Table header row
             echo "<th>Key</th>";
@@ -626,30 +617,11 @@ $weight = [4, 3, 1, 2, 5];
 
             // Menampilkan matriks
             echo "<br>";
-            echo "Matrix Disordance Real :<br>";
-            $count = 0;
-            for ($i = 0; $i < $num_rows; $i++) {
-                for ($j = 0; $j < $num_columns; $j++) {
-                    echo $matrix[$i][$j] . "\t";
-                }
-                echo "<br>";
-                $count++;
-                if ($count % 4 == 0) {
-                    echo "<br>";
-                }
-            }
 
             // Assuming your matrix is pre-defined as $matrix
             echo "<br>";
-            echo "<table>";
-            echo "Matrix Disordance : </br>";  // Table caption
-
-            echo "<tr>";  // Table header row
-            // Add header cells if needed (modify as needed)
-            for ($j = 0; $j < $num_columns; $j++) {
-                echo "<th>Column " . ($j + 1) . "</th>";
-            }
-            echo "</tr>";
+            echo "<caption><h3>Matrix Disordance</h3></caption>";
+            echo "<table border='1'>";  // Tambahkan border agar tabel terlihat
 
             for ($i = 0; $i < $num_rows; $i++) {
                 echo "<tr>";
@@ -677,16 +649,14 @@ $weight = [4, 3, 1, 2, 5];
             $thresholdDis = $total2 / (sizeof($data) * (sizeof($data) - 1));
 
             echo "<br>";
-            echo "<b>Total Matriks Concordance : </b></br>" . $total;
-            echo "<br>";
-            echo "<b>Total Matriks Disordance : </b></br>" . $total2;
-            echo "<br>";
-            echo "<b>Threshold Concordance : </b></br>" . $thresholdCon;
-            echo "<br>";
-            echo "<b>Threshold Disordance : </b></br>" . $thresholdDis;
-            echo "<br>";
+            echo "<caption><h3>Total Matriks and Threshold</h3></caption>";  // Table caption
+            echo "<table border='1'>";  // Tambahkan border agar tabel terlihat
+            echo "<tr><td><b>Total Matriks Concordance:</b></td><td>$total</td></tr>";
+            echo "<tr><td><b>Total Matriks Disordance:</b></td><td>$total2</td></tr>";
+            echo "<tr><td><b>Threshold Concordance:</b></td><td>$thresholdCon</td></tr>";
+            echo "<tr><td><b>Threshold Disordance:</b></td><td>$thresholdDis</td></tr>";
 
-            // Misalkan $thresholdCon adalah nilai ambang batas yang telah ditentukan
+            echo "</table>";
 
             foreach ($weighted_concordance as &$value) {
                 if ($value >= $thresholdCon) {
@@ -703,18 +673,10 @@ $weight = [4, 3, 1, 2, 5];
                     $value = 0;
                 }
             }
-            // Jika Anda ingin menampilkan nilai array yang sudah diubah
             echo "<br>";
 
-            echo "Weighted Concordance Real :\n";
             echo "<br>";
-
-            foreach ($weighted_concordance as $key => $value) {
-                echo $key . ": " . $value . "<br>";
-            }
-
-            echo "<br>";
-            echo "Weighted Concordance :\n<br>";
+            echo "<h3>Dominan Concordance</h3>";
 
             echo "<table>";
             echo "<tr>
@@ -731,17 +693,34 @@ $weight = [4, 3, 1, 2, 5];
 
             echo "</table>";
 
-
-            echo "<br>";
-            echo "Weighted Disordance :\n";
-            echo "<br>";
-
-            foreach ($weighted_disordance as $key => $value) {
-                echo $key . ": " . $value . "<br>";
+            $num_rows = 0;
+            $num_columns = 0;
+            foreach ($weighted_concordance as $key => $value) {
+                $row_index = intval(substr($key, 1, 1)) - 1;
+                $column_index = intval(substr($key, 2, 1)) - 1;
+                $matrix[$row_index][$column_index] = $value;
+                $num_rows = max($num_rows, $row_index + 1);
+                $num_columns = max($num_columns, $column_index + 1);
             }
 
             echo "<br>";
-            echo "Weighted Disordance :\n<br>";
+            echo "<caption><h3>Matrix Dominan Concordance</h3></caption>";
+            echo "<table border='1'>";  // Tambahkan border agar tabel terlihat
+
+            for ($i = 0; $i < $num_rows; $i++) {
+                echo "<tr>";
+                for ($j = 0; $j < $num_columns; $j++) {
+                    echo "<td>" . $matrix[$i][$j] . "</td>";
+                }
+                echo "</tr>";
+            }
+
+            echo "</table>";
+            echo "<br>";
+
+
+            echo "<br>";
+            echo "<h3>Dominan Disordance</h3>";
 
             echo "<table>";
             echo "<tr>
@@ -757,6 +736,34 @@ $weight = [4, 3, 1, 2, 5];
             }
 
             echo "</table>";
+
+            $num_rows = 0;
+            $num_columns = 0;
+            foreach ($weighted_disordance as $key => $value) {
+                $row_index = intval(substr($key, 1, 1)) - 1;
+                $column_index = intval(substr($key, 2, 1)) - 1;
+                $matrix[$row_index][$column_index] = $value;
+                $num_rows = max($num_rows, $row_index + 1);
+                $num_columns = max($num_columns, $column_index + 1);
+            }
+
+            echo "<br>";
+            echo "<caption><h3>Matrix Dominan Concordance</h3></caption>";
+            echo "<table border='1'>";
+
+            for ($i = 0; $i < $num_rows; $i++) {
+                echo "<tr>";
+                for ($j = 0; $j < $num_columns; $j++) {
+                    echo "<td>" . $matrix[$i][$j] . "</td>";
+                }
+                echo "</tr>";
+            }
+
+            echo "</table>";
+
+            echo "<br>";
+
+
 
             $aggregate_matrix = [];
 
@@ -775,14 +782,8 @@ $weight = [4, 3, 1, 2, 5];
                 }
             }
 
-            // Menampilkan hasil perkalian dalam array aggregate_matrix
-            echo "Hasil Perkalian dalam Aggregate Matrix:<br>";
-            foreach ($aggregate_matrix as $key => $value) {
-                echo $key . ": " . $value . "<br>";
-            }
-
             echo "<br>";
-            echo "Hasil Perkalian dalam Aggregate Matrix: :\n<br>";
+            echo "<h3>Aggregate Dominance</h3>";
 
             echo "<table>";
             echo "<tr>
@@ -820,22 +821,10 @@ $weight = [4, 3, 1, 2, 5];
 
             // Menampilkan matriks
             echo "<br>";
-            echo "Matrix Disordance Real :<br>";
-            $count = 0;
-            for ($i = 0; $i < $num_rows; $i++) {
-                for ($j = 0; $j < $num_columns; $j++) {
-                    echo $matrix[$i][$j] . "\t";
-                }
-                echo "<br>";
-                $count++;
-                if ($count % 4 == 0) {
-                    echo "<br>";
-                }
-            }
 
 
             echo "<br>";
-            echo "Matrix Disordance:<br>";
+            echo "<h3>Matrix Aggregate</h3>";
             echo "<table>";
 
             for ($i = 0; $i < $num_rows; $i++) {
@@ -865,7 +854,7 @@ $weight = [4, 3, 1, 2, 5];
             // Menampilkan hasil
             // echo "Baris dengan Kemunculan 1 Terbanyak dalam Matriks: " . ($max_row_index + 1);
             echo "<br>";
-            echo "Result: " . ($max_row_index + 1);
+            echo "<h1>Chosen Candidate: $submittedCandidateNames[$max_row_index] </h1>";
         }
         ?>
 
@@ -897,6 +886,14 @@ $weight = [4, 3, 1, 2, 5];
         /* Tinggi gambar diperbesar */
         object-fit: cover;
         /* Crop gambar agar sesuai dengan container */
+    }
+
+    hr {
+        border: none;
+        height: 1px;
+        /* Ubah tinggi garis sesuai keinginan */
+        background-color: #333;
+        /* Ubah warna garis sesuai keinginan */
     }
 </style>
 
