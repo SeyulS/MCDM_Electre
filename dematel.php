@@ -647,15 +647,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     }
                     echo '</table>';
 
-                    $attributes_to_display = [];
-                    echo "<br>";
-                    echo "<h3>Most Influence Criteria</h3>";
-                    echo '<ul>';
+                    $attributes_to_display = '';
                     foreach ($max_attributes as $attribute) {
-                        $attributes_to_display = $attribute;
-                        echo "<li>$attribute</li>";
+                        if (!empty($attributes_to_display)) {
+                            $attributes_to_display .= ', ';
+                        }
+                        $attributes_to_display .= $attribute;
                     }
-                    echo '</ul>';
 
                     echo "<h3 class='mt-3'>Final Matrix T</h3>";
                     echo '<table id="matrixTable" class="table table-bordered matrix-table">';
